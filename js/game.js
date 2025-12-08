@@ -1,5 +1,7 @@
 let currentWord = null; //выбранное слово
 let wordLetters = [];
+let errorScore = 0;
+let succesScore = 0;
 
 const alphabet = 'абвгдеёжзиклмнопрстуфхцчшщьъэюя'
 const topics = ['Города', 'Транспорт', 'Спорт'];
@@ -56,6 +58,8 @@ function init() {
 
         button.onclick = () => {
             checkletter(alphabet[i]);
+            // button.disabled = true;
+            button.onclick = null;
         }
 
         gameElements.letters.append(button);
@@ -63,7 +67,17 @@ function init() {
 
 }
 
+function* showHungPartGenerator() {
+        for(let i = 0; i< gameElements.hungman.length; i++) {
+            gameElements.hungman[i].style.display = 'block';
+            yield;
+        }
+    }
+
+    let showHungPart = showHungPartGenerator();
+
 function checkletter (letter) {
+    let indexes = [];
     while(true) {
         let pos = 0;
         let indexes = []
@@ -77,16 +91,38 @@ function checkletter (letter) {
         pos = foundPos + 1;
     }
 
-    if(indexes) {
+    if(indexes.length > 0) {
         //отображаем буквы 
+       for(let index of indexes) {
+        wordLetters[index].element.innerText = wordLetters[index].letter;
+        succesScore++;
+       }
+       
+       if(succesScore == currentWord.length) {
+        gameOver('Вы выиграли!');
+       }
+       
+
     } else {
         // изменить картинку
-       showHungPart();
+       showHungPart.next();
+       errorScore++;
+
+       if(errorScore >= gameElements.hungman.length) {
+        gameOver('Вы проиграли');
+       }
     }
 
-    function showHungPart() {
-        
-    }
+}
+
+function gameOver(message) {
+    let gameOver = document.querySelector('.game-over');
+    gameOver.innerText = message;
+    gameOver.classList.add('active');
+
+    // setTimeoutA(() => {
+    //    location.reload();
+    // },3000)
 }
 
 function rand(min,max) {
@@ -97,3 +133,4 @@ function rand(min,max) {
 }
 
 init();
+
