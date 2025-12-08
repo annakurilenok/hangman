@@ -1,3 +1,13 @@
+let state = JSON.parse(window.localStorage.getItem('state'));
+if(!state) {
+    state = {
+        topicIndex: null,
+        wordIndex: null
+    }
+    
+}
+
+
 let currentWord = null; //выбранное слово
 let wordLetters = [];
 let errorScore = 0;
@@ -29,8 +39,8 @@ const gameElements = {
 }
 
 function init() {
-    let topicIndex = rand(0, topics.length - 1);
-    let wordsSet = words[topics[topicIndex]];
+    let topicIndex = state.topicIndex !== null? state.topicIndex : rand(0, topics.length - 1);
+    let wordsSet = state.wordIndex !== null ? state.wordIndex : words[topics[topicIndex]];
     let wordIndex = rand(0, wordsSet.length - 1);
 
     currentWord = wordsSet[wordIndex];
